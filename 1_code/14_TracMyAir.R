@@ -1,14 +1,16 @@
 # Created on: 5/1/22 by RM
-# Last updated: 5/1/22 by RM
+# Last updated: 5/6/22 by RM
 
 rm(list=ls())
+
+dat<-read.csv("/nas/longleaf/home/revathi/purpleair/9_DELIVERABLES/PA_WF_paired_monitors_addresses.csv")
 
 d5=20.7
 d6=-0.0107
 d7=-0.0022
-b8=112
-b9=1964
-b10=1
+b8=dat$in_bldg_area
+b9=dat$in_yr_built
+b10=dat$in_nfloor
 if(b10==1){
   d13=0.000145
 } else if(b10==2){
@@ -51,8 +53,8 @@ if(b15==1 & b10==1){
 } else if(b15==5 & b10==3){
   d16=0.000049
 }
-b17=23.8
-b18=18.4
+b17=dat$in_temp
+b18=dat$out_temp
 b19=4.8 #km/hr
 c20=c12*sqrt((d13*abs((b17+273.15)-(b18+273.15)))+(d16*((b19*1000/3600)^2)))
 d21=2.44

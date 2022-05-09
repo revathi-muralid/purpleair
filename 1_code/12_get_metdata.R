@@ -15,7 +15,7 @@ dat<-dat[which(dat$end_year>=2020),]
 dat<-dat[which(dat$state=="CA"),]
 
 # Read in file of paired PA monitors
-monitors<-fread("/nas/longleaf/home/revathi/purpleair/2_sensor_lists/WF_io_pairs_540km_Dec21.csv" )
+monitors<-fread("/nas/longleaf/home/revathi/purpleair/2_sensor_lists/WF_io_pairs_540km_May22.csv" )
 
 names(monitors)<-c("outdoor_ID","Dist","lon","lat","indoor_ID")
 monitors$lon<-gsub("c[(]","",monitors$lon)
@@ -47,7 +47,7 @@ for(i in 1:nrow(point_sf)){
   # Grab first (closest) pair record
   target_sf4<-target_sf3[c(1),]
   # # Reattach PA data to df of monitors near met station i
-  if((nrow(target_sf4)>0)==T){
+  if(nrow(target_sf4)>0){
     target_sf4$outdoor_ID<-point_sf$outdoor_ID[i]
     target_sf4$indoor_ID<-point_sf$indoor_ID[i]
     target_sf4$PA_Dist<-point_sf$Dist[i]
@@ -109,11 +109,24 @@ for(i in 1:nrow(met_clean)){
 
 met_out<-rbindlist(mydfs)
 
+met_clean2<-met_clean[,c(1:13)]
+met_clean2<-met_clean2[!duplicated(met_clean2)]
+
+
+
+met_fin<-merge(met_out,met_clean,by=c("usaf","wban"),all.x=TRUE,allow.cartesian=TRUE)
+
+# Join PA data back to met
+
+
 # Output hourly met data
-write.csv(met_out, 'Hourly_MET_2020.csv',na="",row.names=F,quote=FALSE)
+met_fin2<-met_fin[,c(1:25,32:36)]
+fwrite(met_fin2, 'Hourly_MET_2020_May22.csv',na="",row.names=F,quote=FALSE)
 
 
 # Output PA indoor/outdoor monitor data with associated met stations
-met_clean2<-met_clean
-met_clean2<-as.matrix(met_clean2)
-write.csv(met_clean2,'MET_WF_io_pairs_540km.csv',na="",row.names=F)
+met_clean3<-met_clean
+met_clean3<-met_clean3[,c(1:8,15:19)]
+PA_pairs<-read.csv("")
+met_clean3<-as.matrix(met_clean3)
+write.csv(met_clean3,'MET_WF_io_pairs_540km_May22.csv',na="",row.names=F)
